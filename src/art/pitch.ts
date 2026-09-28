@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import {
-  BOX_LEN, BOX_Y0, BOX_Y1, GOAL_DEPTH, GOAL_H, GOAL_Y0, GOAL_Y1, PITCH_D, PITCH_L, PITCH_TOP,
+  BOX_LEN, BOX_Y0, BOX_Y1, GOAL_DEPTH, GOAL_H, GOAL_Y0, GOAL_Y1, PENALTY_SPOT, PITCH_D, PITCH_L, PITCH_TOP,
   SIX_LEN, SIX_Y0, SIX_Y1, VIEW_H, WORLD_SX_MAX, WORLD_SX_MIN, projectX, projectY,
 } from '../config';
 import { PixelBuffer } from './PixelBuffer';
@@ -83,7 +83,7 @@ export function createPitchTexture(scene: Phaser.Scene): void {
     hLine(Math.min(gx, sixX), Math.max(gx, sixX), SIX_Y0);
     hLine(Math.min(gx, sixX), Math.max(gx, sixX), SIX_Y1);
     vLine(sixX, SIX_Y0, SIX_Y1);
-    const spotX = gx + dir * 62;
+    const spotX = gx + dir * PENALTY_SPOT;
     plot(spotX, PITCH_D / 2);
     plot(spotX + 1, PITCH_D / 2);
     for (let a = -1.2; a <= 1.2; a += 0.01) {

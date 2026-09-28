@@ -40,6 +40,16 @@ export class Footballer {
   diveT = 0;
   diveVy = 0;
   holdT = 0;
+  /** Lunge time of a slide tackle, then time lying on the grass afterwards. */
+  slideT = 0;
+  downT = 0;
+  slideDX = 1;
+  slideDY = 0;
+  slideResolved = false;
+  /** Match time when this player last had the ball at his feet. */
+  lastOwnedAt = -99;
+  yellows = 0;
+  sentOff = false;
   private animT = 0;
   private readonly sprite: Phaser.GameObjects.Sprite;
   private readonly shadow: Phaser.GameObjects.Image;
@@ -94,21 +104,57 @@ export class Footballer {
     if (Math.abs(dx) > 0.01) this.facing = dx > 0 ? 1 : -1;
   }
 
+  get onGround(): boolean {
+    return this.slideT > 0 || this.downT > 0;
+  }
+
+  startSlide(dx: number, dy: number, speed: number): void {
+    const d = Math.hypot(dx, dy) || 1;
+    this.slideDX = dx / d;
+    this.slideDY = dy / d;
+    this.face(this.slideDX, this.slideDY);
+    this.slideT = 0.35;
+    this.downT = 0;
+    this.slideResolved = false;
+    this.vx = this.slideDX * speed;
+    this.vy = this.slideDY * speed;
+  }
+
   integrate(dt: number): void {
+    if (this.slideT > 0) {
+      const decay = Math.max(0, 1 - 2.5 * dt);
+      this.vx *= decay;
+      this.vy *= decay;
+      this.slideT -= dt;
+      if (this.slideT <= 0) {
+        this.slideT = 0;
+        this.downT = 0.35;
+      }
+    } else if (this.downT > 0) {
+      this.stop();
+      this.downT = Math.max(0, this.downT - dt);
+    }
     this.x += this.vx * dt;
     this.y += this.vy * dt;
-    if (this.speed > 4 && this.diveT <= 0) this.face(this.vx, this.vy);
+    if (this.speed > 4 && this.diveT <= 0 && !this.onGround) this.face(this.vx, this.vy);
     this.animT += dt * Math.max(0.5, this.speed / 45);
     this.kickT = Math.max(0, this.kickT - dt);
     this.noTouchT = Math.max(0, this.noTouchT - dt);
     this.diveT = Math.max(0, this.diveT - dt);
   }
 
+  removeFromPitch(): void {
+    this.sentOff = true;
+    this.stop();
+    this.sprite.setVisible(false);
+    this.shadow.setVisible(false);
+  }
+
   sync(): void {
     const sx = Math.round(projectX(this.x, this.y));
     const sy = Math.round(projectY(this.y, 0));
     let frame = 'stand';
-    if (this.diveT > 0) frame = 'dive';
+    if (this.diveT > 0 || this.onGround) frame = 'dive';
     else if (this.kickT > 0) frame = 'kick';
     else if (this.speed > 8) frame = Math.floor(this.animT * 8) % 2 === 0 ? 'run1' : 'run2';
     this.sprite.setFrame(frame);

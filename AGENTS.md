@@ -15,11 +15,11 @@ Browser football game for a child aged 7–9, played on a desktop keyboard. The 
 
 ## v1 is only this
 
-A menu to pick a country, then a match: kickoff, move, pass, shoot, goals, scoreboard, clock, and full time. When the ball leaves play, restart with a throw-in, goal kick, or corner. No foul system.
+A menu to pick a country, then a match: kickoff, move, pass, shoot, slide tackle, goals, scoreboard, clock, and full time. When the ball leaves play, restart with a throw-in, goal kick, or corner. Fouls give a free kick, or a penalty inside the box. Reckless fouls show a yellow card; a second yellow sends the player off with no substitute.
 
 ## Do not build until asked
 
-Tournament, cup, season, saves, unlocks, shops, two-player, touch, offside, cards, set-piece aiming, commentary, replays, and online play.
+Tournament, cup, season, saves, unlocks, shops, two-player, touch, offside, red cards for a single foul, substitutes, set-piece aiming beyond the normal pass and shot buttons, commentary, replays, and online play.
 
 ## How to work
 

@@ -52,9 +52,9 @@ export class Ball {
     this.shotBy = null;
   }
 
-  step(dt: number): void {
+  /** Advance a loose ball by one substep. The caller keeps each substep short so nothing tunnels. */
+  integrate(dt: number): void {
     this.prevX = this.x;
-    if (this.owner) return;
     this.x += this.vx * dt;
     this.y += this.vy * dt;
     if (this.z > 0 || this.vz !== 0) {

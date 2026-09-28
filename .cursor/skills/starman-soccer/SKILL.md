@@ -26,7 +26,9 @@ Build the playable loop before polish:
 When a playable build exists, run the dev server and check in the browser:
 
 - Start a match as Eagle's Ning against any country.
-- Pass to a teammate and shoot. A charged shot shows a power bar.
+- Pass to a teammate and shoot. A charged shot shows a power bar and arcs.
+- A hard shot into an outfield player is blocked or deflected, never passes through.
+- A foul shows FOUL and gives a free kick or penalty; a reckless one shows a yellow card with the name.
 - A goal updates the score and restarts from kickoff.
 - The clock reaches full time and shows the result.
 - Sprites stay sharp when the window is scaled. Text is English and large enough to read.

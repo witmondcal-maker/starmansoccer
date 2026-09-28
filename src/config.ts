@@ -18,6 +18,7 @@ export const GOAL_DEPTH = 14;
 export const BOX_LEN = 90;
 export const BOX_Y0 = PITCH_D / 2 - 40;
 export const BOX_Y1 = PITCH_D / 2 + 40;
+export const PENALTY_SPOT = 62;
 export const SIX_LEN = 30;
 export const SIX_Y0 = PITCH_D / 2 - 24;
 export const SIX_Y1 = PITCH_D / 2 + 24;
