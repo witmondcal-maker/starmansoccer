@@ -1,0 +1,21 @@
+/** Every piece of text the player reads. Keep labels here so they can be translated later. */
+export const STRINGS = {
+  title: 'Starman Soccer',
+  chooseCountry: 'Choose a country',
+  vs: 'vs',
+  controlsLine1: 'Arrows move   Z pass   X shoot',
+  controlsLine2: 'C sprint   Space switch',
+  pressEnterToPlay: 'Press Enter to play',
+  kickOff: 'Kick off!',
+  goal: 'Goal!',
+  save: 'Save!',
+  throwIn: 'Throw in',
+  corner: 'Corner',
+  goalKick: 'Goal kick',
+  fullTime: 'Full time',
+  youWin: 'You win!',
+  draw: 'Draw!',
+  teamWins: (team: string) => `${team} wins`,
+  pressEnterForMenu: 'Press Enter for menu',
+  playerLabel: (num: number, name: string) => `${num} ${name}`,
+} as const;

@@ -1,0 +1,27 @@
+---
+description: Phaser 3 match code for Starman Soccer. Apply when editing the game, scenes, pitch, ball, players, or team data.
+globs: src/**/*.ts
+alwaysApply: false
+---
+
+# Phaser game code
+
+Side-view 2.5D, not a platformer and not top-down. Along-pitch position and depth (near to far sideline) are separate from sprite jump height. Sort sprites by depth. The camera follows the ball along a pitch wider than the screen.
+
+```ts
+new Phaser.Game({
+  type: Phaser.AUTO,
+  width: 384,
+  height: 216,
+  pixelArt: true,
+  roundPixels: true,
+  physics: { default: "arcade" },
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+});
+```
+
+- Scenes: boot, menu, match. Match rules live in the match scene, not in the menu.
+- Teams and players: one typed module. Names come from `.cursor/skills/starman-soccer/references/roster.md`.
+- English UI strings: one module. No scattered literals for labels the player reads.
+- Arcade physics is for motion. Do not add a physics engine, a backend, or another rendering library.
+- Do not smooth pixel art (`pixelArt: true`, no linear filter on sprites).
