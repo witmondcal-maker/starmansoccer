@@ -56,15 +56,22 @@ export class MenuScene extends Phaser.Scene {
     const hero = EAGLES_NING.squad[9];
     const heroKey = playerTextureKey(EAGLES_NING, hero);
     ensurePlayerTexture(this, heroKey, lookFor(EAGLES_NING, hero));
-    this.add.sprite(150, 170, heroKey, 'stand').setOrigin(0.5, 1).setScale(3);
-    new PixelText(this, 128, 134, EAGLES_NING.name, { color: GOLD, align: 'right' });
-    new PixelText(this, VIEW_W / 2, 130, STRINGS.vs, { scale: 2, align: 'center' });
-    this.rival = this.add.sprite(234, 170, '__DEFAULT').setOrigin(0.5, 1).setScale(3).setFlipX(true);
-    this.rivalName = new PixelText(this, 256, 134, '');
+    this.add.sprite(150, 164, heroKey, 'stand').setOrigin(0.5, 1).setScale(3);
+    new PixelText(this, 128, 128, EAGLES_NING.name, { color: GOLD, align: 'right' });
+    new PixelText(this, VIEW_W / 2, 124, STRINGS.vs, { scale: 2, align: 'center' });
+    this.rival = this.add.sprite(234, 164, '__DEFAULT').setOrigin(0.5, 1).setScale(3).setFlipX(true);
+    this.rivalName = new PixelText(this, 256, 128, '');
 
-    new PixelText(this, VIEW_W / 2, 178, STRINGS.controlsLine1, { align: 'center' });
-    new PixelText(this, VIEW_W / 2, 189, STRINGS.controlsLine2, { align: 'center' });
-    this.prompt = new PixelText(this, VIEW_W / 2, 203, STRINGS.pressEnterToPlay, { color: GOLD, align: 'center' });
+    new PixelText(this, VIEW_W / 2, 169, STRINGS.controlsLine1, { align: 'center' });
+    new PixelText(this, VIEW_W / 2, 179, STRINGS.controlsLine2, { align: 'center' });
+    this.prompt = new PixelText(this, VIEW_W / 2, 190, STRINGS.pressEnterToPlay, { color: GOLD, align: 'center' });
+
+    const band = this.add.graphics();
+    band.fillStyle(0x0b0b14, 0.85);
+    band.fillRect(0, 201, VIEW_W, VIEW_H - 201);
+    band.fillStyle(GOLD);
+    band.fillRect(0, 201, VIEW_W, 1);
+    new PixelText(this, VIEW_W / 2, 204, STRINGS.credits, { align: 'center', mixedCase: true });
 
     const kb = this.input.keyboard!;
     const K = Phaser.Input.Keyboard.KeyCodes;

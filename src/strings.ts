@@ -6,6 +6,7 @@ export const STRINGS = {
   controlsLine1: 'Arrows move   Z pass   X shoot',
   controlsLine2: 'C sprint   Space switch   X slide',
   pressEnterToPlay: 'Press Enter to play',
+  credits: 'Created by Joaquim Prins | Designed and Implemented by Ricardo Prins with Grok',
   kickOff: 'Kick off!',
   goal: 'Goal!',
   save: 'Save!',
