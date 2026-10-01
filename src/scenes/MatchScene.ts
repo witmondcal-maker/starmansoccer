@@ -141,12 +141,18 @@ export class MatchScene extends Phaser.Scene {
   private star!: Phaser.GameObjects.Image;
   private powerBar!: Phaser.GameObjects.Graphics;
   private bookings!: Phaser.GameObjects.Graphics;
+  private cupMatch = false;
+  private knockout = false;
+  private leftMatch = false;
 
   constructor() {
     super('match');
   }
 
-  init(data: { countryId?: string }): void {
+  init(data: { countryId?: string; cup?: boolean; knockout?: boolean }): void {
+    this.cupMatch = !!data.cup;
+    this.knockout = !!data.knockout;
+    this.leftMatch = false;
     this.teams = [EAGLES_NING, findCountry(data.countryId ?? '')];
     this.squads = [[], []];
     this.everyone = [];
@@ -243,10 +249,10 @@ export class MatchScene extends Phaser.Scene {
     });
     kb.on('keydown-SPACE', fresh(() => {
       if (this.state === 'play' && this.ball.owner !== this.controlled) this.switchToNearest(true);
-      else if (this.state === 'fulltime') this.scene.start('menu');
+      else if (this.state === 'fulltime') this.leaveMatch();
     }));
     kb.on('keydown-ENTER', fresh(() => {
-      if (this.state === 'fulltime') this.scene.start('menu');
+      if (this.state === 'fulltime') this.leaveMatch();
     }));
     kb.on('keydown-M', fresh(() => {
       toggleMute();
@@ -1570,11 +1576,25 @@ export class MatchScene extends Phaser.Scene {
 
     const [home, away] = this.teams;
     const [a, c] = this.score;
-    const result = a > c ? STRINGS.youWin : a === c ? STRINGS.draw : STRINGS.teamWins(away.name);
+    const levelKnockout = this.knockout && a === c;
+    const result = levelKnockout ? STRINGS.penalties : a > c ? STRINGS.youWin : a === c ? STRINGS.draw : STRINGS.teamWins(away.name);
+    const leave = levelKnockout ? STRINGS.pressEnterForPenalties : this.cupMatch ? STRINGS.pressEnterToContinue : STRINGS.pressEnterForMenu;
     this.hud(new PixelText(this, VIEW_W / 2, 60, STRINGS.fullTime, { scale: 3, color: GOLD, align: 'center' }), 1101);
     this.hud(new PixelText(this, VIEW_W / 2, 94, `${home.name} ${a} - ${c} ${away.name}`, { align: 'center' }), 1101);
     this.hud(new PixelText(this, VIEW_W / 2, 112, result, { scale: 2, align: 'center', color: a >= c ? GOLD : 0xffffff }), 1101);
-    this.hud(new PixelText(this, VIEW_W / 2, 146, STRINGS.pressEnterForMenu, { align: 'center' }), 1101);
+    this.hud(new PixelText(this, VIEW_W / 2, 146, leave, { align: 'center' }), 1101);
+  }
+
+  private leaveMatch(): void {
+    if (this.leftMatch || this.state !== 'fulltime') return;
+    this.leftMatch = true;
+    if (!this.cupMatch) {
+      this.scene.start('menu');
+      return;
+    }
+    const goals: [number, number] = [this.score[0], this.score[1]];
+    if (this.knockout && goals[0] === goals[1]) this.scene.start('shootout', { goals });
+    else this.scene.start('cup', { goals, showGroups: !this.knockout });
   }
 
   // ---------------------------------------------------------------- Drawing

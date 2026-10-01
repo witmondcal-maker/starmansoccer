@@ -67,6 +67,14 @@ Pixel art, SNES-sized sprites, thick outlines, flat colors. Eagle's Ning wears a
 
 Show the score and the clock in large English text: `Eagle's Ning` and the country name.
 
+## World Cup
+
+New Cup shuffles 32 teams into eight groups of four. Eagle's Ning is always in the draw. Each team plays the other three once. A win is 3 points, a draw is 1. If points, goal difference, and goals scored are still tied, a random order saved with the cup breaks the tie. The top two in each group advance.
+
+The player only controls Eagle's Ning. Other fixtures appear at once as scorelines. Stronger teams usually win, and upsets still happen. Knockout rounds are the round of 16, quarterfinals, semifinals, and the final. A group winner plays a runner-up from another group. There is no extra time and no third-place match. A level knockout match is a penalty shootout: arrows pick left, center, or right, X shoots, and the keeper dives. The CPU takes its own kicks. Five kicks each, then sudden death.
+
+After every finished match, one JSON snapshot is written to the browser. Continue opens that same cup. Leaving during the 3:00, or during the shootout, does not keep that match. M mutes for the session. After the final, the champion is shown and a new cup can start.
+
 ## Sound
 
 Short effects, no music: a menu confirm, a whistle for kickoff and fouls (a little longer at full time), a pass, a shot whose pitch rises with the power bar, a soft bounce or block, a short goal cheer, and a yellow card. A send-off uses the card sound plus a low tone. M mutes for the rest of the session. The menu and the match show SOUND or MUTE.

@@ -33,9 +33,9 @@ Reserves are not selectable in v1. They exist so later substitutions have a fixe
 
 ## Countries
 
-Sixteen opponents. Each gets the same squad shape when the data module is written: 11 starters in a 4-4-2 and 7 reserves, all fictional one-word names. No full names, club names, or shirt names copied from a real player.
+Thirty-one opponents. Each gets the same squad shape: 11 starters in a 4-4-2 and 7 reserves, all fictional one-word names. No full names, club names, or shirt names copied from a real player.
 
-Brazil, Argentina, France, England, Spain, Germany, Italy, Portugal, Netherlands, Japan, Mexico, United States, Nigeria, Morocco, Uruguay, South Korea.
+Brazil, Argentina, France, England, Spain, Germany, Italy, Portugal, Netherlands, Japan, Mexico, United States, Nigeria, Morocco, Uruguay, South Korea, Belgium, Croatia, Colombia, Senegal, Australia, Switzerland, Denmark, Poland, Ecuador, Canada, Ghana, Cameroon, Sweden, Scotland, Egypt.
 
 The country squads and kits live only in `src/data/teams.ts`. Do not copy them here.
 
