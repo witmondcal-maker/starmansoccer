@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { bounce, goal, isMuted, pass, sendOff as sendOffSound, shot, toggleMute, whistle, yellowCard } from '../audio/sfx';
 import { PixelText } from '../art/PixelText';
 import { ensurePlayerTexture, lookFor, playerTextureKey } from '../art/sprites';
 import {
@@ -132,6 +133,8 @@ export class MatchScene extends Phaser.Scene {
   private bannerSub!: PixelText;
   private bannerT = 0;
   private playerLabel!: PixelText;
+  private muteLabel!: PixelText;
+  private muteShown = '';
   private cardIcon!: Phaser.GameObjects.Graphics;
   private cardLine!: PixelText;
   private cardName!: PixelText;
@@ -206,7 +209,7 @@ export class MatchScene extends Phaser.Scene {
       right: K.RIGHT,
       c: K.C,
     }) as Keys;
-    kb.addCapture([K.Z, K.X, K.SPACE, K.ENTER]);
+    kb.addCapture([K.Z, K.X, K.SPACE, K.ENTER, K.M]);
     const fresh = (fn: () => void) => (event: KeyboardEvent) => {
       if (!event.repeat) fn();
     };
@@ -244,6 +247,10 @@ export class MatchScene extends Phaser.Scene {
     }));
     kb.on('keydown-ENTER', fresh(() => {
       if (this.state === 'fulltime') this.scene.start('menu');
+    }));
+    kb.on('keydown-M', fresh(() => {
+      toggleMute();
+      this.refreshMute();
     }));
 
     this.setupKickoff(0);
@@ -300,6 +307,19 @@ export class MatchScene extends Phaser.Scene {
     this.cardName.setVisible(false);
     this.hud(this.add.image(9, 207, 'star'));
     this.playerLabel = this.hud(new PixelText(this, 17, 204, ''));
+    this.muteLabel = this.hud(new PixelText(this, VIEW_W - 4, 204, STRINGS.sound, { align: 'right', color: GOLD }));
+    this.refreshMute();
+  }
+
+  private refreshMute(): void {
+    try {
+      const text = isMuted() ? STRINGS.mute : STRINGS.sound;
+      if (text === this.muteShown) return;
+      this.muteShown = text;
+      this.muteLabel.setText(text);
+    } catch {
+      /* The label is optional. The match keeps running. */
+    }
   }
 
   private showBanner(text: string, sub: string, seconds: number): void {
@@ -346,6 +366,7 @@ export class MatchScene extends Phaser.Scene {
     this.scoreText[0].setText(String(this.score[0]));
     this.scoreText[1].setText(String(this.score[1]));
     this.playerLabel.setText(STRINGS.playerLabel(this.controlled.info.number, this.controlled.info.name));
+    this.refreshMute();
     if (this.bannerT > 0) {
       this.bannerT -= dt;
       if (this.bannerT <= 0) {
@@ -361,7 +382,10 @@ export class MatchScene extends Phaser.Scene {
   update(_time: number, deltaMs: number): void {
     const dt = Math.min(deltaMs / 1000, 1 / 30);
     this.elapsed += dt;
-    if (this.state === 'fulltime') return;
+    if (this.state === 'fulltime') {
+      this.refreshMute();
+      return;
+    }
 
     this.stateT -= dt;
     switch (this.state) {
@@ -448,6 +472,7 @@ export class MatchScene extends Phaser.Scene {
     this.zT = -1;
     this.xT = -1;
     this.showBanner(STRINGS.kickOff, '', 1.4);
+    whistle();
   }
 
   // ---------------------------------------------------------------- Human input
@@ -587,6 +612,7 @@ export class MatchScene extends Phaser.Scene {
     p.face(b.vx, b.vy);
     p.kickT = 0.2;
     p.noTouchT = 0.3;
+    pass();
   }
 
   /**
@@ -635,6 +661,7 @@ export class MatchScene extends Phaser.Scene {
     p.face(b.vx, b.vy);
     p.kickT = 0.25;
     p.noTouchT = 0.35;
+    shot(power);
   }
 
   private teamPass(c: Footballer, backward: boolean): void {
@@ -958,7 +985,7 @@ export class MatchScene extends Phaser.Scene {
       const n = clamp(Math.ceil(travel / SUBSTEP), 1, 40);
       const h = dt / n;
       for (let i = 0; i < n; i++) {
-        b.integrate(h);
+        if (b.integrate(h)) bounce();
         if (this.state === 'play') {
           if (this.ballContacts()) return;
           this.resolveKeepers();
@@ -1146,6 +1173,7 @@ export class MatchScene extends Phaser.Scene {
     b.shotBy = null;
     f.noTouchT = Math.max(f.noTouchT, 0.15);
     if (blockedShot) this.showBanner(STRINGS.blocked, '', 0.7);
+    bounce();
   }
 
   // ---------------------------------------------------------------- Slides, fouls and cards
@@ -1230,9 +1258,13 @@ export class MatchScene extends Phaser.Scene {
       this.showBanner(STRINGS.foul, '', this.stateT);
       this.showCard(label, off);
       if (off) this.sendOff(offender);
+      whistle();
+      if (off) sendOffSound();
+      else yellowCard();
     } else {
       this.stateT = 1.4;
       this.showBanner(STRINGS.foul, label, this.stateT);
+      whistle();
     }
   }
 
@@ -1303,12 +1335,14 @@ export class MatchScene extends Phaser.Scene {
           b.x = lineX + inside;
           b.vx = -b.vx * 0.5;
           b.vy += b.y < PITCH_D / 2 ? -30 : 30;
+          bounce();
           return;
         }
         if (inMouth && b.z >= GOAL_H - 1 && b.z <= GOAL_H + 2) {
           b.x = lineX + inside;
           b.vx = -b.vx * 0.4;
           b.vz = Math.abs(b.vz) * 0.4 + 30;
+          bounce();
           return;
         }
         if (inMouth && b.z < GOAL_H - 1) {
@@ -1337,6 +1371,7 @@ export class MatchScene extends Phaser.Scene {
     const scorer = this.ball.lastKicker;
     const name = scorer && scorer.team === team ? scorer.info.name : '';
     this.showBanner(STRINGS.goal, name, 2.4);
+    goal();
   }
 
   private keepBallInNet(): void {
@@ -1522,6 +1557,7 @@ export class MatchScene extends Phaser.Scene {
     this.banner.setVisible(false);
     this.bannerSub.setVisible(false);
     this.bannerT = 0;
+    whistle(true);
 
     const panel = this.hud(this.add.graphics(), 1100);
     panel.fillStyle(0x0b0b14, 0.9);

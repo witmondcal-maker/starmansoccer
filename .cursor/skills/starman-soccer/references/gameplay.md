@@ -19,6 +19,7 @@ Side view, like International Superstar Soccer Deluxe. The player controls one t
 | X (without the ball) | Slide tackle in the arrow direction, or the way the player faces |
 | C | Sprint |
 | Space | Switch to the teammate nearest the ball |
+| M | Mute or unmute sound |
 
 Aim assist pulls a pass slightly toward a teammate so most passes arrive. The power bar must be visible while X or Z is held.
 
@@ -65,3 +66,7 @@ Aim assist pulls a pass slightly toward a teammate so most passes arrive. The po
 Pixel art, SNES-sized sprites, thick outlines, flat colors. Eagle's Ning wears a navy shirt, gold shorts, and white socks, with a star on the chest. Country kits are simple and original. Do not copy an official crest or a current national kit.
 
 Show the score and the clock in large English text: `Eagle's Ning` and the country name.
+
+## Sound
+
+Short effects, no music: a menu confirm, a whistle for kickoff and fouls (a little longer at full time), a pass, a shot whose pitch rises with the power bar, a soft bounce or block, a short goal cheer, and a yellow card. A send-off uses the card sound plus a low tone. M mutes for the rest of the session. The menu and the match show SOUND or MUTE.

@@ -24,5 +24,7 @@ export const STRINGS = {
   draw: 'Draw!',
   teamWins: (team: string) => `${team} wins`,
   pressEnterForMenu: 'Press Enter for menu',
+  sound: 'Sound',
+  mute: 'Mute',
   playerLabel: (num: number, name: string) => `${num} ${name}`,
 } as const;

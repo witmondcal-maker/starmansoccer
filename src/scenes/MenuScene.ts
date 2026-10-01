@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { isMuted, menu as menuSound, toggleMute, unlock } from '../audio/sfx';
 import { PixelText } from '../art/PixelText';
 import { ensurePlayerTexture, lookFor, playerTextureKey } from '../art/sprites';
 import { VIEW_H, VIEW_W } from '../config';
@@ -18,6 +19,8 @@ export class MenuScene extends Phaser.Scene {
   private rival!: Phaser.GameObjects.Sprite;
   private rivalName!: PixelText;
   private prompt!: PixelText;
+  private muteLabel!: PixelText;
+  private muteShown = '';
 
   constructor() {
     super('menu');
@@ -72,10 +75,12 @@ export class MenuScene extends Phaser.Scene {
     band.fillStyle(GOLD);
     band.fillRect(0, 201, VIEW_W, 1);
     new PixelText(this, VIEW_W / 2, 204, STRINGS.credits, { align: 'center', mixedCase: true });
+    this.muteLabel = new PixelText(this, 4, 6, STRINGS.sound, { color: GOLD });
+    this.refreshMute();
 
     const kb = this.input.keyboard!;
     const K = Phaser.Input.Keyboard.KeyCodes;
-    kb.addCapture([K.UP, K.DOWN, K.LEFT, K.RIGHT, K.SPACE, K.ENTER, K.Z]);
+    kb.addCapture([K.UP, K.DOWN, K.LEFT, K.RIGHT, K.SPACE, K.ENTER, K.Z, K.M]);
     const n = COUNTRIES.length;
     const move = (step: number) => {
       this.index = (this.index + n + step) % n;
@@ -87,18 +92,37 @@ export class MenuScene extends Phaser.Scene {
     kb.on('keydown-DOWN', () => move(COLS));
     const start = (event: KeyboardEvent) => {
       if (event.repeat) return;
+      unlock();
+      menuSound();
       this.registry.set('countryIndex', this.index);
       this.scene.start('match', { countryId: COUNTRIES[this.index].id });
     };
     kb.on('keydown-ENTER', start);
     kb.on('keydown-Z', start);
     kb.on('keydown-SPACE', start);
+    kb.on('keydown-M', (event: KeyboardEvent) => {
+      if (event.repeat) return;
+      toggleMute();
+      this.refreshMute();
+    });
 
     this.refresh();
   }
 
   update(time: number): void {
     this.prompt.setVisible(Math.floor(time / 450) % 2 === 0);
+    this.refreshMute();
+  }
+
+  private refreshMute(): void {
+    try {
+      const text = isMuted() ? STRINGS.mute : STRINGS.sound;
+      if (text === this.muteShown) return;
+      this.muteShown = text;
+      this.muteLabel.setText(text);
+    } catch {
+      /* The label is optional. The match keeps running. */
+    }
   }
 
   private refresh(): void {

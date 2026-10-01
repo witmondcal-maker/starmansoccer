@@ -52,8 +52,9 @@ export class Ball {
     this.shotBy = null;
   }
 
-  /** Advance a loose ball by one substep. The caller keeps each substep short so nothing tunnels. */
-  integrate(dt: number): void {
+  /** Advance a loose ball by one substep. True when it bounced hard enough to hear. */
+  integrate(dt: number): boolean {
+    let bounced = false;
     this.prevX = this.x;
     this.x += this.vx * dt;
     this.y += this.vy * dt;
@@ -66,6 +67,7 @@ export class Ball {
           this.vz = -this.vz * 0.45;
           this.vx *= 0.8;
           this.vy *= 0.8;
+          bounced = true;
         } else {
           this.vz = 0;
         }
@@ -79,6 +81,7 @@ export class Ball {
       this.vy *= next / sp;
     }
     this.roll += sp * dt;
+    return bounced;
   }
 
   sync(): void {

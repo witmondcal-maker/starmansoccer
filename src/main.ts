@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { audioDebug, installAudioUnlock } from './audio/sfx';
 import { VIEW_H, VIEW_W } from './config';
 import { BootScene } from './scenes/BootScene';
 import { MenuScene } from './scenes/MenuScene';
@@ -28,7 +29,10 @@ const game = new Phaser.Game({
 });
 
 window.addEventListener('resize', () => game.scale.setZoom(integerZoom()));
+installAudioUnlock();
 
 if (import.meta.env.DEV) {
-  (window as unknown as { game: Phaser.Game }).game = game;
+  const dev = window as unknown as { game: Phaser.Game; __sfx: { audioDebug: typeof audioDebug } };
+  dev.game = game;
+  dev.__sfx = { audioDebug };
 }
